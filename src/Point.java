@@ -14,6 +14,18 @@ public class Point {
         coordinates = p.coordinates.clone();
     }
 
+    public double getEuclideanDistance(Point p) {
+        int dimensionality = this.getDimensionality();
+        assert p.getDimensionality() == dimensionality;
+
+        double distanceSum = 0;
+        for (int i = 0; i < dimensionality; i++) {
+            distanceSum += Math.pow(coordinates[i] - p.coordinates[i], 2);
+        }
+
+        return Math.sqrt(distanceSum);
+    }
+
     public int getPointId() {
         return pointId;
     }
