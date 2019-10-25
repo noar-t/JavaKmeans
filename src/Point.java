@@ -2,7 +2,7 @@ import java.util.Arrays;
 
 public class Point {
     private final int pointId;
-    private double[] coordinates;
+    protected double[] coordinates;
 
     public Point (int id, double[] coordinates) {
         this.pointId = id;

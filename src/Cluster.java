@@ -15,4 +15,30 @@ public class Cluster {
     public void add(Cluster c) {
 
     }
+
+    /**
+     * Compute the average of all points in the cluster
+     * @return
+     */
+    public double[] getCenter() {
+        assert points.get(0) != null;
+
+        int dimensionality = points.get(0).getDimensionality();
+        double[] sum = new double[dimensionality];
+
+        for (Point p : points) {
+            double[] coordinates = p.getCoordinates();
+
+            for (int i = 0; i < dimensionality; i++) {
+                sum[i] += coordinates[i];
+            }
+        }
+
+        for (int i = 0; i < sum.length; i++) {
+            sum[i] /= points.size();
+        }
+        //TODO
+
+        return sum;
+    }
 }

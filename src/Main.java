@@ -3,7 +3,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String args[]) throws IOException {
-        KMeans kMeans = new KMeans("/home/noah/Code/MultithreadedPlayground/test/input.txt", 4, 2);
+        KMeans kMeans = new KMeans("input/input.txt", 4, 2);
     }
 
     static void threadsTest() {

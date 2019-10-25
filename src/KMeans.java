@@ -9,12 +9,17 @@ public class KMeans {
     int numThreads;
     Point[] points;
     Centroid[] centroids;
+    Cluster[] clusters;
 
     public KMeans(String inputPath, int numThreads, int numCentroids) throws IOException {
         this.numThreads = numThreads;
 
         readInput(inputPath);
         initCentroids(numCentroids);
+        clusters = new Cluster[centroids.length];
+        for (int i = 0; i < clusters.length; i++) {
+            clusters[i] = new Cluster();
+        }
     }
 
     /* Parse input file of points */
@@ -34,6 +39,7 @@ public class KMeans {
                 })
                 .collect(Collectors.toList());
 
+        points = new Point[list.size()];
         points = list.toArray(points);
     }
 
@@ -45,7 +51,7 @@ public class KMeans {
         }
     }
 
-    public void computeThreadPerCentroid(int iterations) throws Exception {
+    public void computeNIterations(int iterations) throws Exception {
         ArrayList<LocalSumKmeansWorker> localSumKmeansWorkers = new ArrayList<>(numThreads);
         CyclicBarrier barrier = new CyclicBarrier(numThreads);
 
@@ -64,8 +70,8 @@ public class KMeans {
     }
 
     class LocalSumKmeansWorker extends Thread {
-        final int workerId;
-        final private CyclicBarrier barrier;
+        private final int workerId;
+        private final CyclicBarrier barrier;
 
         public LocalSumKmeansWorker(int workerId, CyclicBarrier barrier) {
             this.workerId = workerId;
@@ -102,13 +108,39 @@ public class KMeans {
                 localClusters[closestCentroidId].add(curPoint);
             }
 
+            // Accumulate local updates into global centroids
+            // TODO i think this requires monitor support
+            for (int i = 0; i < clusters.length; i++) {
+                synchronized (clusters[i]) {
+                    clusters[i].add(localClusters[i]);
+                }
+            }
 
-            // End summing stage
+            // End local summing stage
             try {
                 barrier.await();
             } catch (Exception e) {
                 System.out.println(e);
             }
+
+            // Single thread adjust the centroids
+            // TODO could parallelize this
+            if (workerId == 0) {
+                for (int i = 0; i < centroids.length; i++) {
+                    centroids[i].setCenter(clusters[i].getCenter());
+                }
+            }
+
+            // End single thread global update stage
+            try {
+                barrier.await();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+
+            //TODO add threshold for converging and actually test
+
             System.out.println(this.getName());
         }
     }

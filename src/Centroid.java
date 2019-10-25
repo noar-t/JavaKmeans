@@ -4,7 +4,7 @@ public class Centroid extends Point {
         super(point);
     }
 
-    public void move() {
-        ;
+    public void setCenter(double[] newCoordinates) {
+        this.coordinates = newCoordinates;
     }
 }
