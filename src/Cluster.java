@@ -13,7 +13,11 @@ public class Cluster {
     }
 
     public void add(Cluster c) {
+        points.addAll(c.points);
+    }
 
+    public boolean empty() {
+        return points.size() == 0;
     }
 
     /**

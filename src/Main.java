@@ -3,7 +3,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String args[]) throws IOException {
-        KMeans kMeans = new KMeans("input/input.txt", 4, 2);
+        KMeans kMeans = new KMeans("input/input.txt", 5, 2,10000000, .0001);
+        kMeans.compute();
+        // TODO print before and after
     }
 
     static void threadsTest() {
